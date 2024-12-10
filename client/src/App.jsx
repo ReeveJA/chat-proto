@@ -11,14 +11,14 @@ const App = () => {
     setRole(selectedRole);
     const initialMessage =
       selectedRole === "buyer"
-        ? "What are you looking for?"
-        : "What item would you like to sell?";
+        ? "I'm looking to negotiate a great deal. Help me strategize."
+        : "I want to sell my item at the best possible price. Assist me in negotiating.";
     setMessages([{ sender: "bot", text: initialMessage }]);
   };
 
   // Handles sending a message
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !role) return;
 
     // Add user message to chat
     const userMessage = { sender: "user", text: input };
@@ -41,13 +41,20 @@ const App = () => {
       console.error("Error:", error);
       const errorMessage = {
         sender: "bot",
-        text: "Something went wrong. Please try again.",
+        text: "I'm having trouble processing your request. Please try again.",
       };
       setMessages((prev) => [...prev, errorMessage]);
     }
 
     // Clear input field
     setInput("");
+  };
+
+  // Handle input submission on Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
   };
 
   return (
@@ -78,7 +85,7 @@ const App = () => {
           // Chat screen
           <>
             <div className="p-4 border-b bg-blue-500 text-white text-center text-lg font-semibold">
-              AI Chatbot
+              AI Negotiation Assistant
             </div>
 
             <div className="flex-grow overflow-y-auto p-4 space-y-4">
@@ -107,7 +114,8 @@ const App = () => {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
+                onKeyPress={handleKeyPress}
+                placeholder="Type your negotiation strategy..."
                 className="flex-grow px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
